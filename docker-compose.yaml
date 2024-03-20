@@ -12,7 +12,7 @@ services:
       - "5271:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionString=User ID=fiap;Password=SenhaLocalPonto;Host=postgres-db-ponto;Port=5433;Database=hackathonponto;Pooling=true;
+      - ConnectionString=User ID=fiap;Password=SenhaLocalPonto;Host=postgres-db-ponto;Port=5432;Database=hackathonponto;Pooling=true;
     depends_on:
       postgres-db-ponto:
         condition: service_healthy
@@ -25,7 +25,7 @@ services:
       POSTGRES_USER: fiap
       POSTGRES_DB: hackathonponto
     ports:
-      - "15436:5433"
+      - "15437:5432"
     volumes:
       - hackathon-soat1-grp13-db-data-ponto:/var/lib/postgresql/data
     healthcheck:
