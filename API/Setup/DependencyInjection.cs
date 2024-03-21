@@ -1,13 +1,13 @@
 ﻿using MediatR;
-using Domain.Base.Communication.Mediator;
-using Domain.Base.Messages.CommonMessages.Notifications;
+using Infra.Pontos;
 using Domain.Pontos;
 using Infra.Pontos.Repository;
 using Application.Pontos.Queries;
 using Application.Pontos.UseCases;
-using Infra.Pontos;
 using Application.Pontos.Commands;
 using Application.Pontos.Handlers;
+using Domain.Base.Communication.Mediator;
+using Domain.Base.Messages.CommonMessages.Notifications;
 
 namespace API.Setup
 {
@@ -28,6 +28,7 @@ namespace API.Setup
             services.AddScoped<PontosContext>();
 
             services.AddScoped<IRequestHandler<AdicionarPontoCommand, bool>, AdicionarPontoCommandHandler>();
+            services.AddScoped<IRequestHandler<SolicitaEspelhoPontoCommand, bool>, SolicitaEspelhoPontoCommandHandler>();
 
         }
     }

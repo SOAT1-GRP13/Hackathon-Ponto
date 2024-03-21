@@ -78,5 +78,33 @@ namespace API.Controllers
                                                           $"Erro ao tentar obter pontos. Erro: {ex.Message}");
             }
         }
+
+        [HttpPost("solicita-espelho-ponto")]
+        //[Authorize]
+        [SwaggerOperation(
+             Summary = "Solicita espelho de ponto",
+             Description = "Solicita o espelho de ponto por email")]
+        [SwaggerResponse(400, "Caso não obedeça alguma regra de negocio", typeof(IEnumerable<string>))]
+        [SwaggerResponse(500, "Caso algo inesperado aconteça")]
+        public async Task<IActionResult> SolicitaEspelhoPonto([FromBody] SolicitaEspelhoPontoInput input)
+        {
+            try
+            {
+                var dataHora = DateTime.UtcNow;
+                var command = new SolicitaEspelhoPontoCommand(input);
+                await _mediatorHandler.EnviarComando<SolicitaEspelhoPontoCommand, bool>(command);
+
+                if (!OperacaoValida())
+                    return StatusCode(StatusCodes.Status400BadRequest, ObterMensagensErro());
+
+                return Ok($"Espelho de ponto solicitado com sucesso às: {TimeZoneInfo.ConvertTimeFromUtc(dataHora, TimeZoneInfo.Local)}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                                       $"Erro ao tentar solicitar espelho de ponto. Erro: {ex.Message}");
+            }
+
+        }
     }
 }

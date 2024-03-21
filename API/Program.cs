@@ -1,10 +1,11 @@
 using API.Setup;
-using Domain.Configuration;
 using Infra.Pontos;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Filters;
+using Infra.RabbitMQ;
+using Domain.RabbitMQ;
 using System.Reflection;
+using Domain.Configuration;
+using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +27,7 @@ if (builder.Environment.IsProduction())
 {
     logger.LogInformation("Ambiente de Producao detectado.");
 
-    builder.Configuration.AddAmazonSecretsManager("us-west-2", "pedido-secret");
+    builder.Configuration.AddAmazonSecretsManager("us-west-2", "ponto-secret");
 
     connectionString = builder.Configuration.GetSection("ConnectionString").Value ?? string.Empty;
 
@@ -56,14 +57,13 @@ builder.Services.AddSwaggerGenConfig();
 //builder.Services.AddAutoMapper(typeof(PedidosMappingProfile));
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
-//builder.Services.AddSingleton<RabbitMQModelFactory>();
-//builder.Services.AddSingleton(serviceProvider =>
-//{
-//    var modelFactory = serviceProvider.GetRequiredService<RabbitMQModelFactory>();
-//    return modelFactory.CreateModel();
-//});
-//builder.Services.AddSingleton<IRabbitMQService, RabbitMQService>();
-//builder.Services.AddHostedService<PedidoPagoSubscriber>();
+builder.Services.AddSingleton<RabbitMQModelFactory>();
+builder.Services.AddSingleton(serviceProvider =>
+{
+    var modelFactory = serviceProvider.GetRequiredService<RabbitMQModelFactory>();
+    return modelFactory.CreateModel();
+});
+builder.Services.AddSingleton<IRabbitMQService, RabbitMQService>();
 
 
 builder.Services.RegisterServices();
