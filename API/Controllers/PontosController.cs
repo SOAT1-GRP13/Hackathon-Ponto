@@ -79,18 +79,19 @@ namespace API.Controllers
             }
         }
 
-        [HttpPost("solicita-espelho-ponto")]
+        [HttpGet("solicita-espelho-ponto")]
         //[Authorize]
         [SwaggerOperation(
              Summary = "Solicita espelho de ponto",
              Description = "Solicita o espelho de ponto por email")]
         [SwaggerResponse(400, "Caso não obedeça alguma regra de negocio", typeof(IEnumerable<string>))]
         [SwaggerResponse(500, "Caso algo inesperado aconteça")]
-        public async Task<IActionResult> SolicitaEspelhoPonto([FromBody] SolicitaEspelhoPontoInput input)
+        public async Task<IActionResult> SolicitaEspelhoPonto(int mes, int ano)
         {
             try
             {
                 var dataHora = DateTime.UtcNow;
+                var input = new SolicitaEspelhoPontoInput(ObterUserId(), mes, ano);
                 var command = new SolicitaEspelhoPontoCommand(input);
                 await _mediatorHandler.EnviarComando<SolicitaEspelhoPontoCommand, bool>(command);
 
