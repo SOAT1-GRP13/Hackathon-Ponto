@@ -8,6 +8,6 @@ namespace Application.Pontos.Queries
     {
         Task<Ponto?> ObterPontoById(Guid id);
 
-        Task<List<PontoDto>>  ObterPontosByUserId(Guid userId);
+        Task<PontoDto> ObterPontosByUserId(Guid userId, int dia, int mes, int ano);
     }
 }

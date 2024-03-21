@@ -31,9 +31,14 @@ namespace Infra.Pontos.Repository
             return await _context.Pontos.FindAsync(id);
         }
 
-        public async Task<IEnumerable<Ponto>> ObterPontosPorUsuario(Guid userId)
+        public async Task<IEnumerable<Ponto>> ObterPontosPorUsuario(Guid userId, int dia, int mes, int ano)
         {
-            return await _context.Pontos.Where(p => p.UserId == userId).ToListAsync();
+            return await _context.Pontos
+                            .Where(p => p.UserId == userId
+                                    && p.DataHora.Day == dia
+                                    && p.DataHora.Month == mes
+                                    && p.DataHora.Year == ano)
+                            .ToListAsync();
         }
 
         public async Task<Ponto> Remover(Guid id)

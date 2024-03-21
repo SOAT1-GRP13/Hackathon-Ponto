@@ -21,20 +21,68 @@ namespace Application.Pontos.Queries
             return ponto;
         }
 
-        public async Task<List<PontoDto>> ObterPontosByUserId(Guid userId)
+        public async Task<PontoDto> ObterPontosByUserId(Guid userId, int dia, int mes, int ano)
         {
-            var pontos = await _pontoRepository.ObterPontosPorUsuario(userId);
-            if (pontos == null) return new List<PontoDto>();
+            var pontos = await _pontoRepository.ObterPontosPorUsuario(userId, dia, mes, ano);
+            if (pontos == null) return new PontoDto();
 
-            return pontos.Select(ponto => new PontoDto
+            var pontosPorData = pontos.Select(p => new PontoDto.PontosPorData
             {
-                Id = ponto.Id,
-                UserId = ponto.UserId,
-                DataHora = TimeZoneInfo.ConvertTimeFromUtc(ponto.DataHora, TimeZoneInfo.Local),
-                TipoPonto = (int)ponto.TipoPonto,
-                TipoPontoDescricao = ponto.TipoPonto.ToString(),
-                Observacao = ponto.Observacao
+                DataHora = p.DataHora,
+                Hora = p.DataHora.ToString("HH:mm"),
+                TipoPonto = (int)p.TipoPonto,
+                TipoPontoDescricao = ((TipoPontoEnum)p.TipoPonto).ToString(),
+                Observacao = p.Observacao
             }).ToList();
+
+            var horasTrabalhadas = calculaHorasTrabalhadas(pontosPorData);
+
+            var pontoDto = new PontoDto
+            {
+                Data = $"{dia:D2}/{mes:D2}/{ano}",
+                TotalHoras = horasTrabalhadas,
+                Batidas = pontosPorData
+            };
+
+            return pontoDto;
+        }
+
+
+        private string calculaHorasTrabalhadas(List<PontoDto.PontosPorData> pontos)
+        {
+            TimeSpan totalHorasTrabalhadas = TimeSpan.Zero;
+
+
+            var pontosDoDia = pontos.OrderBy(p => p.DataHora).ToList();
+            TimeSpan horasTrabalhadasNoDia = TimeSpan.Zero;
+            DateTime? inicioPeriodo = null;
+
+            foreach (var ponto in pontosDoDia)
+            {
+                switch (ponto.TipoPonto)
+                {
+                    case (int)TipoPontoEnum.Entrada:
+                    case (int)TipoPontoEnum.Retorno:
+                        inicioPeriodo = ponto.DataHora;
+                        break;
+                    case (int)TipoPontoEnum.Almoco:
+                    case (int)TipoPontoEnum.Saida:
+                        if (inicioPeriodo.HasValue)
+                        {
+                            horasTrabalhadasNoDia += ponto.DataHora - inicioPeriodo.Value;
+                            inicioPeriodo = null; // Reseta o início do período para o próximo cálculo
+                        }
+                        break;
+                }
+            }
+
+            totalHorasTrabalhadas += horasTrabalhadasNoDia;
+
+            int horas = (int)totalHorasTrabalhadas.TotalHours;
+            int minutos = (int)((totalHorasTrabalhadas.TotalHours - horas) * 60);
+
+            // Retorna o resultado formatado
+            return $"{horas}:{minutos:D2}";
         }
     }
 }

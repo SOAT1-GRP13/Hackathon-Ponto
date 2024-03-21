@@ -29,10 +29,10 @@ namespace API.Controllers
         }
 
         [HttpPost("adicionar-ponto")]
-        //[Authorize]
+        [Authorize]
         [SwaggerOperation(
              Summary = "Adicionar registro de ponto",
-             Description = "Adiciona ponto ao registro")]
+             Description = "Adiciona ponto ao registro (0: Entrada - 1: Almoco - 2: Retorno - 3: Saída)")]
        // [SwaggerResponse(200, "Retorna dados do ponto", typeof(Ponto))]
         [SwaggerResponse(400, "Caso não obedeça alguma regra de negocio", typeof(IEnumerable<string>))]
         [SwaggerResponse(500, "Caso algo inesperado aconteça")]
@@ -58,18 +58,19 @@ namespace API.Controllers
         }
 
         [HttpGet("obter-pontos")]
-        //[Authorize]
+        [Authorize]
         [SwaggerOperation(
                         Summary = "Obter registros de ponto",
                         Description = "Obtem todos os registros de ponto")]
         [SwaggerResponse(200, "Retorna dados dos pontos", typeof(IEnumerable<Ponto>))]
         [SwaggerResponse(400, "Caso não obedeça alguma regra de negocio", typeof(IEnumerable<string>))]
         [SwaggerResponse(500, "Caso algo inesperado aconteça")]
-        public async Task<IActionResult> ObterPontosPorUsuario(Guid userId)
+        public async Task<IActionResult> ObterPontosPorUsuario(int dia, int mes, int ano)
         {
             try
             {
-                var pontos = await _pontoQueries.ObterPontosByUserId(userId);
+                var userId = ObterUserId();
+                var pontos = await _pontoQueries.ObterPontosByUserId(userId, dia, mes, ano);
                 return Ok(pontos);
             }
             catch (Exception ex)
@@ -80,7 +81,7 @@ namespace API.Controllers
         }
 
         [HttpGet("solicita-espelho-ponto")]
-        //[Authorize]
+        [Authorize]
         [SwaggerOperation(
              Summary = "Solicita espelho de ponto",
              Description = "Solicita o espelho de ponto por email")]
