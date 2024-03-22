@@ -54,13 +54,13 @@ jobs:
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: deploy/task-definition.json
-        container-name: producao-api
+        container-name: ponto-api
         image: christiandmelo/hackathon-soat1-grp13-ponto:${{env.VERSION}}
     
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: producao-service
+        service: ponto-service
         cluster: soat1-grp13-tech-hackathon
         wait-for-service-stability: true
