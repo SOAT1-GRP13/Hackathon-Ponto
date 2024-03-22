@@ -84,6 +84,7 @@ app.UseReDoc(c =>
     c.SpecUrl = "/swagger/v1/swagger.json";
 });
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
