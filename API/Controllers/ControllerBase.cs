@@ -36,11 +36,11 @@ namespace API.Controllers
 
         protected Guid ObterUserId()
         {
-            return Guid.Parse("dd1edfcd-1425-4cd8-a8a4-421967940eb5");
-            //if (!string.IsNullOrEmpty(User.FindFirstValue(ClaimTypes.NameIdentifier)))
-            //    return Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            //return Guid.Parse("dd1edfcd-1425-4cd8-a8a4-421967940eb5");
+            if (!string.IsNullOrEmpty(User.FindFirstValue(ClaimTypes.NameIdentifier)))
+                return Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            //throw new DomainException("Usuario não identificado");
+            throw new DomainException("Usuario não identificado");
         }
     }
 }
