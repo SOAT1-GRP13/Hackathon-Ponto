@@ -92,7 +92,7 @@ namespace API.Controllers
             try
             {
                 var dataHora = DateTime.UtcNow;
-                var input = new SolicitaEspelhoPontoInput(ObterUserId(), mes, ano);
+                var input = new SolicitaEspelhoPontoInput(ObterUserId(), mes, ano, ObterUserEmail());
                 var command = new SolicitaEspelhoPontoCommand(input);
                 await _mediatorHandler.EnviarComando<SolicitaEspelhoPontoCommand, bool>(command);
 

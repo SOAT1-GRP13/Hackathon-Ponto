@@ -32,7 +32,7 @@ namespace Application.Tests
         public async Task Handle_ValidCommand_Success()
         {
             // Arrange
-            var validCommand = new SolicitaEspelhoPontoCommand(new SolicitaEspelhoPontoInput(Guid.NewGuid(), 1, 2020));
+            var validCommand = new SolicitaEspelhoPontoCommand(new SolicitaEspelhoPontoInput(Guid.NewGuid(), 1, 2020, "email"));
 
             // Act
             var result = await _handler.Handle(validCommand, CancellationToken.None);
@@ -46,7 +46,7 @@ namespace Application.Tests
         public async Task Handle_InvalidCommand_PublishesNotificationsAndReturnsFalse()
         {
             // Arrange
-            var invalidCommand = new SolicitaEspelhoPontoCommand(new SolicitaEspelhoPontoInput(Guid.Empty, 0, 0)); // Propositalmente inválido
+            var invalidCommand = new SolicitaEspelhoPontoCommand(new SolicitaEspelhoPontoInput(Guid.Empty, 0, 0, string.Empty)); // Propositalmente inválido
 
             // Act
             var result = await _handler.Handle(invalidCommand, CancellationToken.None);
@@ -60,7 +60,7 @@ namespace Application.Tests
         public async Task Handle_DomainException_PublishesNotificationAndReturnsFalse()
         {
             // Arrange
-            var validCommand = new SolicitaEspelhoPontoCommand(new SolicitaEspelhoPontoInput(Guid.NewGuid(), 1, 2020));
+            var validCommand = new SolicitaEspelhoPontoCommand(new SolicitaEspelhoPontoInput(Guid.NewGuid(), 1, 2020, "email"));
             _rabbitMQServiceMock.Setup(r => r.PublicaMensagem(It.IsAny<string>(), It.IsAny<string>()))
                                 .Throws(new DomainException("Erro de domínio simulado"));
 
@@ -76,7 +76,7 @@ namespace Application.Tests
         public async Task Handle_Exception_ReturnsFalse()
         {
             // Arrange
-            var validCommand = new SolicitaEspelhoPontoCommand(new SolicitaEspelhoPontoInput(Guid.NewGuid(), 1, 2020));
+            var validCommand = new SolicitaEspelhoPontoCommand(new SolicitaEspelhoPontoInput(Guid.NewGuid(), 1, 2020, "email"));
             _rabbitMQServiceMock.Setup(r => r.PublicaMensagem(It.IsAny<string>(), It.IsAny<string>()))
                                 .Throws(new Exception("Erro inesperado"));
 

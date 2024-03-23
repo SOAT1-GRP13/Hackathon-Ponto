@@ -28,11 +28,14 @@ namespace Application.Pontos.Boundaries
             Format = "int")]
         public int Ano { get; set; }
 
-        public SolicitaEspelhoPontoInput(Guid userId, int mes, int ano)
+        public string UserEmail {get;set;}
+
+        public SolicitaEspelhoPontoInput(Guid userId, int mes, int ano, string email)
         {
             UserId = userId;
             Mes = mes;
             Ano = ano;
+            UserEmail = email;
         }
 
     }
